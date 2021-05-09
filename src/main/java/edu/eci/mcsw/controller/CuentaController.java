@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,10 +52,29 @@ public class CuentaController {
 
             return new ResponseEntity<>(CuentaServices.verCuenta(dbcon,cuenta), HttpStatus.ACCEPTED);
         } catch (SQLException e) {
-            e.printStackTrace();
             return new ResponseEntity<>("Consulta failed", HttpStatus.BAD_REQUEST);
         }
     }
 
+    @GetMapping("all")
+    public ResponseEntity<?> verCuentas(@RequestParam String userquery){
+        try {
+            Set<Map<String, String>> obj = CuentaServices.getCuentas(dbcon,userquery);
+            if (obj == null){ return new ResponseEntity<>("Not authorized to perform this operation", HttpStatus.FORBIDDEN);}
+            return new ResponseEntity<>(obj, HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Not authorized to perform this operation", HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    @PutMapping("{cuenta}")
+    public ResponseEntity<?> modificarSaldo(@PathVariable("cuenta") String cuenta, float saldonuevo){
+        try {
+            CuentaServices.actualizarSaldo(dbcon,cuenta,saldonuevo);
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        } catch (SQLException throwables) {
+            return new ResponseEntity<>(HttpStatus.NOT_MODIFIED);
+        }
+    }
 }

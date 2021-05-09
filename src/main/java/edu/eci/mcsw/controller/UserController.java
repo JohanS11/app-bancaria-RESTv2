@@ -3,6 +3,7 @@ package edu.eci.mcsw.controller;
 import edu.eci.mcsw.model.Credentials;
 import edu.eci.mcsw.model.Usuario;
 import edu.eci.mcsw.persistence.JDBC;
+import edu.eci.mcsw.services.CuentaServices;
 import edu.eci.mcsw.services.ServicesException;
 import edu.eci.mcsw.services.TransaccionServices;
 import edu.eci.mcsw.services.UserServices;
@@ -79,11 +80,11 @@ public class UserController {
     }
 
     @GetMapping("/accounts")
-    public ResponseEntity<?> accounts(){
+    public ResponseEntity<?> accounts(@RequestParam String user){
 
         try {
 
-            return new ResponseEntity<>( UserServices.accounts(dbcon), HttpStatus.ACCEPTED);
+            return new ResponseEntity<>( CuentaServices.getCuentas(dbcon,user), HttpStatus.ACCEPTED);
         } catch (SQLException e) {
             e.printStackTrace();
             return new ResponseEntity<>("get failed", HttpStatus.BAD_REQUEST);
@@ -113,5 +114,14 @@ public class UserController {
         }
     }
 
+    @GetMapping("/1s4dm1n")
+    public boolean isAdmin(@RequestParam String usuario){
+
+        try {
+            return UserServices.isAdmin(dbcon,usuario);
+        } catch (SQLException throwables) {
+            return false;
+        }
+    }
 
 }

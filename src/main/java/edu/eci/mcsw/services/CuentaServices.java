@@ -2,12 +2,8 @@ package edu.eci.mcsw.services;
 
 import edu.eci.mcsw.model.Cuenta;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
 
 public class CuentaServices {
 
@@ -97,4 +93,27 @@ public class CuentaServices {
         return np;
     }
 
+    public static Set<Map<String,String>> getCuentas(Connection dbcon, String user) throws SQLException {
+
+
+        if (UserServices.isAdmin(dbcon,user)) {
+            PreparedStatement getCuentas = null;
+            String consultaCuentas = "SELECT * FROM cuenta";
+            getCuentas = dbcon.prepareStatement(consultaCuentas);
+            ResultSet resultado = getCuentas.executeQuery();
+            Set<Map<String,String>> jsongrande = new HashSet<>();
+            ResultSetMetaData rsmd = resultado.getMetaData();
+            while (resultado.next()) {
+                Map<String, String> jsonpequeño = new HashMap<>();
+                jsonpequeño.put(rsmd.getColumnName(1), resultado.getString("numerodecuenta"));
+                jsonpequeño.put(rsmd.getColumnName(2), resultado.getString("saldo"));
+                jsonpequeño.put(rsmd.getColumnName(3), resultado.getString("tipodecuenta"));
+                jsonpequeño.put(rsmd.getColumnName(4), resultado.getString("usuario"));
+                jsongrande.add(jsonpequeño);
+            }
+            return jsongrande;
+        } else {
+            return null;
+        }
+    }
 }

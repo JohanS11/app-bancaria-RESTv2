@@ -44,18 +44,36 @@ public class UserServices {
 
     }
 
+    public static boolean isAdmin(Connection con, String user) throws  SQLException{
+
+        PreparedStatement getRol = null;
+        List<String> np = new LinkedList<>();
+        String consultaRol = "SELECT rol FROM usuario_sistema where cedula='"+user+"'"+ "and rol='admin'";
+        getRol = con.prepareStatement(consultaRol);
+        ResultSet resultado = getRol.executeQuery();
+        while (resultado.next()) {
+            np.add(resultado.getString("rol"));
+        }
+        if (np.size() != 0) {
+            return true;
+        }
+        return false;
+
+    }
+
     public static List<String> dologin(Connection con, Credentials credentials) throws SQLException {
 
         List<String> np = new LinkedList<>();
 
         PreparedStatement getuser = null;
-        String consultaUsuarios = "SELECT correo,nombre,cedula FROM USUARIO where correo=" + "'" + credentials.getEmail() + "'" + "and pwd=" + "'" + credentials.getPassword() + "'";
+        String consultaUsuarios = "SELECT correo,nombre,cedula,rol FROM USUARIO where correo=" + "'" + credentials.getEmail() + "'" + "and pwd=" + "'" + credentials.getPassword() + "'";
         getuser = con.prepareStatement(consultaUsuarios);
         ResultSet resultado = getuser.executeQuery();
         while (resultado.next()) {
             np.add(resultado.getString("correo"));
             np.add(resultado.getString("nombre"));
             np.add(resultado.getString("cedula"));
+            np.add(resultado.getString("rol"));
         }
         if (np.size() != 0) {
             return np;
@@ -102,6 +120,7 @@ public class UserServices {
         return np;
 
     }
+
 
     public static boolean dologincritico(Connection con, Credentials credentials) throws SQLException {
 
