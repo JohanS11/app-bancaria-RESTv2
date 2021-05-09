@@ -3,6 +3,7 @@ import './App.css';
 import {Login} from "./components/Login";
 import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom'
 import Drawer from './components/Drawer';
+import DrawerAdmin from './components/DrawerAdmin';
 import { Redirect } from 'react-router-dom';
 import { SignUp } from './components/SignUp';
 import { LoginAdmin } from './components/LoginAdmin';
@@ -26,9 +27,8 @@ class App extends Component {
 
                 <Route path="/Y3Jpc3RpYW4gZXMgZ2F5"
                     component={LoginAdmin} exact> </Route>
-
                     
-                    <Route path="/signup"
+                <Route path="/signup"
                     component={SignUp} exact> </Route>
 
                 <Route path="/user/transacciones"       
@@ -37,6 +37,9 @@ class App extends Component {
                     <Route path="/dashboard"
                         component={Drawer} exact> </Route>
 
+                <Route path="/dashboard-admin"
+                        component={DrawerAdmin} exact> </Route>
+                        
                     <Route path="/logout" render={()=>{
                         localStorage.clear();
                         return <Redirect to="/"></Redirect>;

@@ -30,6 +30,12 @@ export class Login extends React.Component{
         });
     }
 
+    sanitizeHTML = (str) => {
+        return str.replace(/[^\w. ]/gi, function (c) {
+            return '&#' + c.charCodeAt(0) + ';';
+        });
+    }
+
     handleChangePasswd(e) {
         this.setState({
             password : e.target.value
@@ -37,20 +43,27 @@ export class Login extends React.Component{
     }
 
     handleSend() {
-    
 
         var url = "http://localhost:8080"
+        console.log(this.sanitizeHTML(this.state.email));
+        
         Axios.post(url+"/usuarios/ingreso",{email:this.state.email,password:this.state.password})
         .then((data)=>{
-            console.log("entre");
-            console.log(data)
-            localStorage.setItem("IsLoggedIn",true);
+            
             localStorage.setItem("email",data.data[0]);
             localStorage.setItem("username",data.data[1]);
             localStorage.setItem("cedula",data.data[2]);
-
-            this.setState(this.state);
-
+            
+            if (data.data[3] === "admin") {
+                console.log("entresadsa");
+                localStorage.setItem("IsLoggedIn2",true);
+                this.setState(this.state);
+            } else{
+                localStorage.setItem("IsLoggedIn",true);
+                this.setState(this.state);
+            }
+       
+        
         }).catch((err)=>{
             alert("Usuario o contraseña inválidos");
         });
@@ -58,7 +71,11 @@ export class Login extends React.Component{
     
     render(){
         
-        if(localStorage.getItem("IsLoggedIn")){
+        if(localStorage.getItem("IsLoggedIn2")){
+            return <Redirect to="/dashboard-admin"></Redirect>
+        }
+
+        else if(localStorage.getItem("IsLoggedIn")){
             return <Redirect to="/dashboard"></Redirect>
         }
     
